@@ -9,4 +9,4 @@ def dataset_creator():
     df2.loc[df2['B'] == 2.5,  'B'] = 3
     df = df.join(df2)
     df = df.join(df3)
-    df.to_csv('alz_data.csv')
+    df.to_csv('alzr_data.csv')
