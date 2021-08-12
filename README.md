@@ -6,7 +6,7 @@ Begin by running cell 1 to import necessary packages
 Run cell 2 to import the mock alzhiemers dataset as "data" and drop the unneccesary extra index column 
     You will see that this dataframe contains columns titled GDS, CDR, and various neuropsychological assessments with scores assigned for each row. These columns are the measures used to interpret a possible diagnosis.
 
-Run cell 3 to calculate the z scores for each column. This will give us a better indication of if someone is cognitively impared. This also creates a new dataframe without the GDS, CDR, and seperate unprocessed neuropsych scores.
+Run cell 3 to calculate the z scores for each column. This will give us a better indication of if someone is cognitively impared. This also creates a new dataframe without the GDS, CDR, and seperate unprocessed neuropsych scores. Norms derived from this paper: https://files.alz.washington.edu/documentation/weintraub-2018-v3.pdf
 
 Run cell 4 to create a normal (0) or abnormal (1) interpretation. All abnormal scores are defined as -1.5 standard deviations below the mean.
 
