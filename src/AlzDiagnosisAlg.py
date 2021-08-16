@@ -125,11 +125,13 @@ class AlzDiagnosisAlg():
         domains = []
         for row in range(zs_ab.shape[0]):
             try:
-                if 3<= zs_ab.iloc[row, 0] <= 7:
+                if 1<= zs_ab.iloc[row, 0] <= 2:
+                    domains.append('Normal Cognition')
+                elif 3<= zs_ab.iloc[row, 0] <= 7:
                     zs_ab_dropped = zs_ab.drop(['GDS'], axis = 1)
                     row_sum = zs_ab_dropped.iloc[row].sum()
                     if row_sum == 0:
-                        domains.append('')
+                        domains.append('Normal Cognition')
                     if row_sum == 1:
                         if zs_ab_dropped.iloc[row, 0]==1:
                             domains.append('Memory')
@@ -162,12 +164,10 @@ class AlzDiagnosisAlg():
                         else:
                             pass
                         domains.append(sub_domains)
-                    if 1<= zs_ab.iloc[row, 0] <= 2:
-                        domains.append('')
                 else:
                     raise ValueError()
             except ValueError:
-                domains.append('')
+                domains.append('Values could not be parsed')
                 pass    
         return domains
     def run_all(file_path):
