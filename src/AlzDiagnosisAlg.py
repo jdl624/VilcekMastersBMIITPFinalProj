@@ -6,7 +6,8 @@ import shutil
 class AlzDiagnosisAlg():
     
     def open_dataframe(file_path):
-        #Opens .csv file
+        #Opens .csv file and drops the extra index column created from importing.
+        #If the file is not in .csv format, the function will fail and prompt for the file to be in csv format.
         if file_path.endswith('csv'):
             df = pd.read_csv(file_path)
             df = df.drop(columns = 'Unnamed: 0')
@@ -16,6 +17,7 @@ class AlzDiagnosisAlg():
     
     def z_calc(data):
         # calculates z scores for each neuropsych test based on norms derived from this paper: https://files.alz.washington.edu/documentation/weintraub-2018-v3.pdf
+        #This first section calculates z score based on age 
         zs = data
         for row in range(zs.shape[0]):
             if zs.iloc[row, 1] < 60:
@@ -54,7 +56,7 @@ class AlzDiagnosisAlg():
                 zs = zs.assign(MoCA_Z = lambda x: ((x['moca']-23.8)/3.5))
                 zs = zs.assign(Categories_Animal_Z = lambda x: ((x['Categories Animal']-17.0)/5.4))
             zs = zs.drop(['Age', 'CDR','Delayed Recall','Number Span Test Forward','Part A Trail Making','Part B Trail Making','moca','Categories Animal'], axis = 1)
-            
+            #This section sets any score below -1.5 st.dev below mean to 1 and anything else to 0. This then gives us a binary of "normal" and "abnormal" for each pt's neuropsych tests.
             zs_ab = zs
             zs_ab['DR_ab'] = zs_ab['Delayed_Recall_Z'].apply(lambda x: 1 if x <= -1.5 else 0)
             zs_ab['NSF_ab'] = zs_ab['Number_Span_Test_Forward_Z'].apply(lambda x: 1 if x <= -1.5 else 0)
@@ -67,7 +69,9 @@ class AlzDiagnosisAlg():
 
     
     def alz_diagnose(data):
-        #Assigns diagnosis based off GDS and CDR values.
+        #Assigns diagnosis based off GDS and CDR values. 
+        #This function sums the GDS and CDR values and assigns a clinical interpretation based on them. If the values are out of range for the GDS, a value error is raised and the phrase 
+        #Invalid GDS Value, must be between 1 and 7 is appended to the list.
         data = data.drop(['Age', 'Delayed Recall','Number Span Test Forward','Part A Trail Making','Part B Trail Making','moca','Categories Animal'], axis = 1)
         diags = []
         for row in range(data.shape[0]):
@@ -171,6 +175,7 @@ class AlzDiagnosisAlg():
                 pass    
         return domains
     def run_all(file_path):
+        #This function runs the class and gives us the cleaned and processed csv file in the "results folder
         data = AlzDiagnosisAlg.open_dataframe(file_path)
         zs_interp = AlzDiagnosisAlg.z_calc(data)
         diags = AlzDiagnosisAlg.alz_diagnose(data)
@@ -188,3 +193,4 @@ class AlzDiagnosisAlg():
         target = r'/Users/jonlinks/Documents/VilcekMastersBMIITPFinalProj/Results/alz_data_diag.csv'
         shutil.move(original,target)
         return data
+        print('Cleaning was successful!')
